@@ -27,24 +27,29 @@ class _NoNetworkWidgetState extends State<NoNetworkWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: _networkResult == NetworkResult.off
-          ? const SizedBox(
-              height: 50,
-              child: Center(
-                  child: Text(
+    return AnimatedCrossFade(
+        firstChild: Container(
+          color: Colors.black,
+          child: const SizedBox(
+            height: 50,
+            child: Center(
+              child: Text(
                 "Offline",
                 style: TextStyle(color: Colors.white),
-              )))
-          : const SizedBox(),
-    );
+              ),
+            ),
+          ),
+        ),
+        secondChild: const SizedBox(),
+        crossFadeState: _networkResult == NetworkResult.off
+            ? CrossFadeState.showFirst
+            : CrossFadeState.showSecond,
+        duration: const Duration(milliseconds: 400));
   }
 
   Future handleNetwork() async {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       _networkResult = await _networkChangeManager.checkNetworkFirst();
-
       setState(() {});
     });
   }
